@@ -3,6 +3,78 @@ from users_data import valid_user_data, generate_invalid_user_data
 import pytest
 
 
+def find_user_by_email(page, user):
+    grid = page.locator('div[role="grid"]')
+    grid.wait_for()
+
+    headers = grid.locator('div[role="columnheader"]')
+    header_count = headers.count()
+    print(f"Found {header_count} header columns")
+
+    email_index = None
+    for i in range(header_count):
+        text = headers.nth(i).inner_text().strip()
+        print(f"Header {i}: '{text}'")
+        if text == "Email":
+            email_index = i
+            break
+
+    if email_index is None:
+        raise AssertionError("Email column not found")
+
+    print(f"Email column found at index {email_index}")
+
+    rows = grid.locator('div[role="row"]')
+    print(rows)
+    row_count = rows.count()
+    print(f"Found {row_count} rows")
+
+    for i in range(row_count):
+        row = rows[i]
+        print("row", row)
+        cells = row.locator('div[role="cell"]')
+
+        cell_text = cells.nth(email_index).inner_text().strip()
+        print(f"Row {i}, Email cell: '{cell_text}'")
+        if cell_text == user["email"]:
+            print(f"User found in row {i}")
+            return row
+
+    raise AssertionError(f'User with email {user["email"]} not found')
+
+
+def find_row_by_email(page, email_to_find: str):
+    grid = page.locator('div[role="grid"]')
+    grid.wait_for()
+
+    rows = grid.locator('div[role="row"]')
+    total_rows = rows.count()
+    print(f"Total rows found (including header): {total_rows}")
+
+    for i in range(total_rows):
+        row = rows.nth(i)
+
+        # Force evaluation of the row
+        row_text = row.inner_text()  # this actually queries the DOM
+        print(f"Row {i} full text: '{row_text}'")
+
+        # locate the email cell
+        email_cell = row.locator('div[data-field="email"]')
+        if email_cell.count() == 0:
+            print(f"Skipping row {i}, no email cell")
+            continue
+
+        cell_text = email_cell.inner_text().strip()
+        print(f"Row {i} email cell: '{cell_text}'")
+
+        if cell_text == email_to_find:
+            print(f"Found matching row at index {i}")
+            return row
+
+    print(f"No matching row found for email '{email_to_find}'")
+    return None
+
+
 def fill_user_form(page, user):
     # === NAME ===
     name_input = page.locator('input[name="name"]')
@@ -66,6 +138,11 @@ def test_valid_user_creation(login, user):
 
     # EXPECTATION: dialog must close
     page.wait_for_selector('[data-testid="create-user-dialog"]', state="detached")
+
+    matching_row = find_row_by_email(page, user["email"])
+    assert (
+        matching_row is not None
+    ), f"User with email {user['email']} not found in data grid"
 
 
 def go_to_users_page(page):
