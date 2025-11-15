@@ -43,10 +43,9 @@ def fill_user_form(page, user):
             advanced_section.click()
 
         checkbox = page.get_by_label("Allow Wallet Watch")
-
-        # Set and assert
-        if not checkbox.is_checked():
-            checkbox.check()
+        checkbox.wait_for()
+        checkbox_input = page.locator('input.PrivateSwitchBase-input[type="checkbox"]')
+        checkbox_input.click()
 
         assert checkbox.is_checked() is True
 
