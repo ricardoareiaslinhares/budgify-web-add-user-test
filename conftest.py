@@ -1,6 +1,14 @@
 import pytest
 from constants import login_url, highlights_url, admin_username, admin_password
 
+"""
+When a pytest runs (function that starts with 'test_') it aumatically looks for 'fixtures' that have the same name
+as the test parameter; then searchs and runs fixtures whose name is equal to those parameters.
+And provides clean up after.
+
+https://docs.pytest.org/en/stable/how-to/fixtures.html
+"""
+
 
 @pytest.fixture
 def login(playwright):
@@ -22,5 +30,5 @@ def login(playwright):
     # Wait to be redirected
     page.wait_for_url(highlights_url)
 
-    yield page
-    context.close()
+    yield page  # Returns to the test
+    context.close()  # Runs after the test
