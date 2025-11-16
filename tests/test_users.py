@@ -19,7 +19,7 @@ def open_create_user_dialog(page: Page):
     return dialog
 
 
-# This tests the 2 case where the user is created - TC2
+# This tests the 2 cases where the user is created - TC2
 @pytest.mark.parametrize("user", valid_user_data)
 def test_valid_user_creation(login: Page, user: User):
     page = login
@@ -60,7 +60,7 @@ def test_invalid_user_creation(login: Page, user: User):
     fill_user_form(page, user)
     page.get_by_role("button", name="Save").click()
 
-    # All invalid fields must have aria-invalid="true" - means that have a red border
+    # All invalid elements must have aria-invalid="true" - means that have a red border
     for field, value in user.items():
         if value == "" and field != "wallet":
             input_el = page.locator(f"input[name='{field}']")

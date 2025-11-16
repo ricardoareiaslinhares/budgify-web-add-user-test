@@ -34,7 +34,7 @@ From the root dir, run:
 PYTHONPATH=. pytest -n auto -v
 ```
 
-This will run all the tests in parallel
+This will run all the tests in parallel.
 
 To show the tests executing (Browser UI) go to ``conftest.py`` in line 10, change to ``headless=False,``, and run with:
 ```bash
