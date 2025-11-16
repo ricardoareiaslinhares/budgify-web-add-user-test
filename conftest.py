@@ -7,11 +7,11 @@ def login(playwright):
     # Launch a browser context with slow motion
     context = playwright.chromium.launch_persistent_context(
         user_data_dir="/tmp/playwright",
-        headless=False,
-        # slow_mo=1000,  # 0.5s delay per action
+        headless=True,
+        # slow_mo=1000,  # delay per action
     )
     page = context.new_page()
-    page.set_default_timeout(5000)
+    page.set_default_timeout(10000)
     page.goto(login_url)
     page.get_by_label("Email").fill(admin_username)
     page.get_by_label("Password").fill(admin_password)

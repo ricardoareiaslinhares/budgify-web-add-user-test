@@ -1,20 +1,31 @@
-from itertools import combinations, product
+from itertools import combinations
+from typing import TypedDict
 
-valid_user_data = [
+
+class User(TypedDict):
+    name: str
+    email: str
+    password: str
+    dateOfBirth: str
+    genre: str
+    wallet: bool
+
+
+valid_user_data: list[User] = [
     {
         "name": "Budgify1",
         "email": "testePass3@teste.com",
         "password": "teste123",
-        "birthdate": "1980-12-01",
-        "gender": "Male",
+        "dateOfBirth": "1980-12-01",
+        "genre": "Male",
         "wallet": True,
     },
     {
         "name": "Budgify2",
         "email": "testePass4@teste.com",
         "password": "teste123",
-        "birthdate": "1980-12-01",
-        "gender": "Female",
+        "dateOfBirth": "1980-12-01",
+        "genre": "Female",
         "wallet": False,
     },
 ]
@@ -22,7 +33,6 @@ valid_user_data = [
 
 def generate_invalid_user_data():
     wallet_values = [True, False]
-    invalid_value = ""  # empty counts as invalid
     invalid_users = []
 
     template_user = valid_user_data[0]
@@ -35,7 +45,11 @@ def generate_invalid_user_data():
                 user = template_user.copy()  # start with all valid
                 # set selected fields to invalid
                 for f in failing_fields:
-                    user[f] = invalid_value
+                    if f == "genre":
+                        # can only select valid options. Male is the default
+                        user[f] = "Male"
+                    else:
+                        user[f] = ""  # default invalid
                 # set carteira
                 user["wallet"] = wallet
                 invalid_users.append(user)
